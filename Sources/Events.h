@@ -34,6 +34,25 @@
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
+#include "USB1.h"
+#include "USB0.h"
+#include "CDC1.h"
+#include "Tx1.h"
+#include "Rx1.h"
+#include "AS1.h"
+#include "WAIT1.h"
+#include "LED1.h"
+#include "LEDpin1.h"
+#include "BitIoLdd1.h"
+#include "LED2.h"
+#include "LEDpin2.h"
+#include "BitIoLdd2.h"
+#include "LED3.h"
+#include "LEDpin3.h"
+#include "BitIoLdd3.h"
+#include "LED4.h"
+#include "LEDpin4.h"
+#include "BitIoLdd4.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,6 +72,42 @@ extern "C" {
 ** ===================================================================
 */
 void Cpu_OnNMIINT0(void);
+
+/*
+** ===================================================================
+**     Event       :  AS1_OnBlockReceived (module Events)
+**
+**     Component   :  AS1 [Serial_LDD]
+*/
+/*!
+**     @brief
+**         This event is called when the requested number of data is
+**         moved to the input buffer.
+**     @param
+**         UserDataPtr     - Pointer to the user or
+**                           RTOS specific data. This pointer is passed
+**                           as the parameter of Init method.
+*/
+/* ===================================================================*/
+void AS1_OnBlockReceived(LDD_TUserData *UserDataPtr);
+
+/*
+** ===================================================================
+**     Event       :  AS1_OnBlockSent (module Events)
+**
+**     Component   :  AS1 [Serial_LDD]
+*/
+/*!
+**     @brief
+**         This event is called after the last character from the
+**         output buffer is moved to the transmitter. 
+**     @param
+**         UserDataPtr     - Pointer to the user or
+**                           RTOS specific data. This pointer is passed
+**                           as the parameter of Init method.
+*/
+/* ===================================================================*/
+void AS1_OnBlockSent(LDD_TUserData *UserDataPtr);
 
 /* END Events */
 

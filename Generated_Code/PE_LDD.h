@@ -5,7 +5,7 @@
 **     Processor   : MK60DN512VLQ10
 **     Version     : Component 01.000, Driver 01.04, CPU db: 3.00.000
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2014-01-08, 10:06, # CodeGen: 0
+**     Date/Time   : 2014-01-08, 10:27, # CodeGen: 2
 **     Abstract    :
 **
 **     Settings    :
@@ -35,6 +35,25 @@
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
+#include "USB1.h"
+#include "USB0.h"
+#include "CDC1.h"
+#include "Tx1.h"
+#include "Rx1.h"
+#include "AS1.h"
+#include "WAIT1.h"
+#include "LED1.h"
+#include "LEDpin1.h"
+#include "BitIoLdd1.h"
+#include "LED2.h"
+#include "LEDpin2.h"
+#include "BitIoLdd2.h"
+#include "LED3.h"
+#include "LEDpin3.h"
+#include "BitIoLdd3.h"
+#include "LED4.h"
+#include "LEDpin4.h"
+#include "BitIoLdd4.h"
 
 
 /*

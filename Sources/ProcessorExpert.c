@@ -30,6 +30,25 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
+#include "USB1.h"
+#include "USB0.h"
+#include "CDC1.h"
+#include "Tx1.h"
+#include "Rx1.h"
+#include "AS1.h"
+#include "WAIT1.h"
+#include "LED1.h"
+#include "LEDpin1.h"
+#include "BitIoLdd1.h"
+#include "LED2.h"
+#include "LEDpin2.h"
+#include "BitIoLdd2.h"
+#include "LED3.h"
+#include "LEDpin3.h"
+#include "BitIoLdd3.h"
+#include "LED4.h"
+#include "LEDpin4.h"
+#include "BitIoLdd4.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"
@@ -37,10 +56,63 @@
 #include "IO_Map.h"
 
 /* User includes (#include below this line is not maintained by Processor Expert) */
+#define USE_TWR_SER_UART  0 /* if set to one, it will use the UART on the TWR-SER board. */
 
-/*lint -save  -e970 Disable MISRA rule (6.3) checking. */
-int main(void)
-/*lint -restore Enable MISRA rule (6.3) checking. */
+static uint8_t cdc_buffer[USB1_DATA_BUFF_SIZE];
+static uint8_t in_buffer[USB1_DATA_BUFF_SIZE];
+static LDD_TDeviceData *serialHandle = NULL; /* handle to device data */
+volatile uint8_t SentFlag = 0; /* this will be set to 1 once the block has been sent */
+
+static void SendChar(unsigned char ch) {
+  SentFlag = 0; /* this will be set to 1 once the block has been sent */
+  while(AS1_SendBlock(serialHandle, (LDD_TData*)&ch, 1)!=ERR_OK) {} /* Send char */
+  while(SentFlag==0) {} /* wait until we get the green flag from the TX interrupt */
+}
+
+static void SendStr(const unsigned char *str) {
+#if USE_TWR_SER_UART
+  while(*str!='\0') {
+    SendChar(*str++);
+  }
+#else
+  (void)str; /* unused */
+#endif
+}
+
+static void CDC_Run(void) {
+  int i;
+
+  SendStr((unsigned char*)"Hello World to Kinetis SCI3!\r\n");
+  for(;;) {
+    while(CDC1_App_Task(cdc_buffer, sizeof(cdc_buffer))==ERR_BUSOFF) {
+      /* device not enumerated */
+      LED1_Neg(); LED2_Off();
+     // WAIT1_Waitms(1); /* just give back some CPU time. */
+      SendStr((unsigned char*)"waiting to enumerate...\r\n");
+    }
+    LED1_Off(); LED2_Neg();
+    if (CDC1_GetCharsInRxBuf()!=0) {
+      i = 0;
+      while(   i<sizeof(in_buffer)-1
+            && CDC1_GetChar(&in_buffer[i])==ERR_OK
+           )
+      {
+        i++;
+      }
+      in_buffer[i] = '\0';
+      (void)CDC1_SendString((unsigned char*)"echo: ");
+      (void)CDC1_SendString(in_buffer);
+      (void)CDC1_SendString((unsigned char*)"\r\n");
+      SendStr((unsigned char*)"echo to SCI3: ");
+      SendStr(in_buffer);
+      SendStr((unsigned char*)"\r\n");
+    } else {
+     // WAIT1_Waitms(5);
+    }
+  }
+}
+
+void main(void)
 {
   /* Write your local variable definition here */
 
@@ -49,7 +121,8 @@ int main(void)
   /*** End of Processor Expert internal initialization.                    ***/
 
   /* Write your code here */
-  /* For example: for(;;) { } */
+  serialHandle = AS1_Init(NULL);
+  CDC_Run();
 
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/

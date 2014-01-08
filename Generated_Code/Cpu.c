@@ -7,7 +7,7 @@
 **     Version     : Component 01.000, Driver 01.04, CPU db: 3.00.000
 **     Datasheet   : K60P144M100SF2V2RM Rev. 2, Jun 2012
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2014-01-08, 10:10, # CodeGen: 1
+**     Date/Time   : 2014-01-08, 10:27, # CodeGen: 2
 **     Abstract    :
 **
 **     Settings    :
@@ -35,6 +35,25 @@
 /* MODULE Cpu. */
 
 /* {Default RTOS Adapter} No RTOS includes */
+#include "USB1.h"
+#include "USB0.h"
+#include "CDC1.h"
+#include "Tx1.h"
+#include "Rx1.h"
+#include "AS1.h"
+#include "WAIT1.h"
+#include "LED1.h"
+#include "LEDpin1.h"
+#include "BitIoLdd1.h"
+#include "LED2.h"
+#include "LEDpin2.h"
+#include "BitIoLdd2.h"
+#include "LED3.h"
+#include "LEDpin3.h"
+#include "BitIoLdd3.h"
+#include "LED4.h"
+#include "LEDpin4.h"
+#include "BitIoLdd4.h"
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
@@ -116,8 +135,8 @@ void __init_hardware(void)
                  WDOG_STCTRLH_CLKSRC_MASK |
                  0x0100U;       
   /* System clock initialization */
-  /* SIM_SCGC5: PORTA=1 */
-  SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK;   /* Enable clock gate for ports to enable pin routing */
+  /* SIM_SCGC5: PORTC=1,PORTA=1 */
+  SIM_SCGC5 |= (SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTA_MASK); /* Enable clock gate for ports to enable pin routing */
   /* SIM_CLKDIV1: OUTDIV1=0,OUTDIV2=0,OUTDIV3=1,OUTDIV4=1,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0,??=0 */
   SIM_CLKDIV1 = SIM_CLKDIV1_OUTDIV1(0x00) |
                 SIM_CLKDIV1_OUTDIV2(0x00) |
@@ -248,8 +267,33 @@ void PE_low_level_init(void)
   /* SMC_PMPROT: ??=0,??=0,AVLP=0,??=0,ALLS=0,??=0,AVLLS=0,??=0 */
   SMC_PMPROT = 0x00U;                  /* Setup Power mode protection register */
   /* Common initialization of the CPU registers */
+  /* NVICIP73: PRI73=0 */
+  NVICIP73 = NVIC_IP_PRI73(0x00);                                   
   /* NVICIP20: PRI20=0 */
   NVICIP20 = NVIC_IP_PRI20(0x00);                                   
+  /* ### Init_USB_OTG "USB0" init code ... */
+  USB0_Init();
+  /* ### RingBufferUInt8 "Tx1" init code ... */
+  Tx1_Init();
+  /* ### RingBufferUInt8 "Rx1" init code ... */
+  Rx1_Init();
+  (void)USB1_Init();
+  /* ### BitIO_LDD "BitIoLdd1" component auto initialization. Auto initialization feature can be disabled by component property "Auto initialization". */
+  (void)BitIoLdd1_Init(NULL);
+  /* ### LED "LED1" init code ... */
+  LED1_Init(); /* initialize LED driver */
+  /* ### BitIO_LDD "BitIoLdd2" component auto initialization. Auto initialization feature can be disabled by component property "Auto initialization". */
+  (void)BitIoLdd2_Init(NULL);
+  /* ### LED "LED2" init code ... */
+  LED2_Init(); /* initialize LED driver */
+  /* ### BitIO_LDD "BitIoLdd3" component auto initialization. Auto initialization feature can be disabled by component property "Auto initialization". */
+  (void)BitIoLdd3_Init(NULL);
+  /* ### LED "LED3" init code ... */
+  LED3_Init(); /* initialize LED driver */
+  /* ### BitIO_LDD "BitIoLdd4" component auto initialization. Auto initialization feature can be disabled by component property "Auto initialization". */
+  (void)BitIoLdd4_Init(NULL);
+  /* ### LED "LED4" init code ... */
+  LED4_Init(); /* initialize LED driver */
   /* Enable interrupts of the given priority level */
   Cpu_SetBASEPRI(0U);
 }

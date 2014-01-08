@@ -5,7 +5,7 @@
 **     Processor   : MK60DN512VLQ10
 **     Version     : Component 01.000, Driver 01.04, CPU db: 3.00.000
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2014-01-08, 10:06, # CodeGen: 0
+**     Date/Time   : 2014-01-08, 10:27, # CodeGen: 2
 **     Abstract    :
 **
 **     Settings    :
@@ -29,6 +29,25 @@
 */         
 
   #include "Cpu.h"
+  #include "USB1.h"
+  #include "USB0.h"
+  #include "CDC1.h"
+  #include "Tx1.h"
+  #include "Rx1.h"
+  #include "AS1.h"
+  #include "WAIT1.h"
+  #include "LED1.h"
+  #include "LEDpin1.h"
+  #include "BitIoLdd1.h"
+  #include "LED2.h"
+  #include "LEDpin2.h"
+  #include "BitIoLdd2.h"
+  #include "LED3.h"
+  #include "LEDpin3.h"
+  #include "BitIoLdd3.h"
+  #include "LED4.h"
+  #include "LEDpin4.h"
+  #include "BitIoLdd4.h"
   #include "Events.h"
 
 
@@ -115,8 +134,8 @@
     (tIsrFunc)&Cpu_Interrupt,          /* 0x40  0x00000100   -   ivINT_UART1_ERR                unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x41  0x00000104   -   ivINT_UART2_RX_TX              unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x42  0x00000108   -   ivINT_UART2_ERR                unused by PE */
-    (tIsrFunc)&Cpu_Interrupt,          /* 0x43  0x0000010C   -   ivINT_UART3_RX_TX              unused by PE */
-    (tIsrFunc)&Cpu_Interrupt,          /* 0x44  0x00000110   -   ivINT_UART3_ERR                unused by PE */
+    (tIsrFunc)&AS1_Interrupt,          /* 0x43  0x0000010C   8   ivINT_UART3_RX_TX              used by PE */
+    (tIsrFunc)&AS1_Interrupt,          /* 0x44  0x00000110   8   ivINT_UART3_ERR                used by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x45  0x00000114   -   ivINT_UART4_RX_TX              unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x46  0x00000118   -   ivINT_UART4_ERR                unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x47  0x0000011C   -   ivINT_UART5_RX_TX              unused by PE */
@@ -137,7 +156,7 @@
     (tIsrFunc)&Cpu_Interrupt,          /* 0x56  0x00000158   -   ivINT_PIT2                     unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x57  0x0000015C   -   ivINT_PIT3                     unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x58  0x00000160   -   ivINT_PDB0                     unused by PE */
-    (tIsrFunc)&Cpu_Interrupt,          /* 0x59  0x00000164   -   ivINT_USB0                     unused by PE */
+    (tIsrFunc)&USB_ISR,                /* 0x59  0x00000164   0   ivINT_USB0                     used by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x5A  0x00000168   -   ivINT_USBDCD                   unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x5B  0x0000016C   -   ivINT_ENET_1588_Timer          unused by PE */
     (tIsrFunc)&Cpu_Interrupt,          /* 0x5C  0x00000170   -   ivINT_ENET_Transmit            unused by PE */
